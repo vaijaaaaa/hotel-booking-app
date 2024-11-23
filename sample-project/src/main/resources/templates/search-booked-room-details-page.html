@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Search Booked Hotel Details</title>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <style>
+      body {
+        background-color: #c7ffd853;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+          <center>
+            <br />
+            <br />
+            <h3>Provide Hotel Details To View The Rooms Booked</h3>
+          </center>
+          <form id="hotelSearchForm">
+            <div class="form-group">
+              <label for="hotelId">Hotel ID:</label>
+              <input type="text" class="form-control" id="hotelId" required />
+            </div>
+
+            <div class="form-group">
+              <label for="location">Location:</label>
+              <div class="dropdown">
+                <button
+                  class="btn btn-default dropdown-toggle"
+                  type="button"
+                  id="location"
+                  data-toggle="dropdown"
+                >
+                  Select Location
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="location">
+                  <li><a href="#" class="location">Chennai</a></li>
+                  <li><a href="#" class="location">Bangalore</a></li>
+                  <li><a href="#" class="location">Delhi</a></li>
+                  <li><a href="#" class="location">Mumbai</a></li>
+                  <li><a href="#" class="location">Kerala</a></li>
+                </ul>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="date">Date (DD/MM/YY):</label>
+              <input type="date" class="form-control" id="date" required />
+            </div>
+            <div class="form-group">
+              <label for="time">Time (HH:MM)</label>
+              <input
+                type="time"
+                class="form-control"
+                id="time"
+                name="time"
+                required
+              />
+            </div>
+            <br />
+            <button type="submit" class="btn btn-primary btn-block">
+              View Details
+            </button>
+          </form>
+          <br />
+          <div id="hotelDetails"></div>
+        </div>
+      </div>
+    </div>
+    <script>
+      $(document).ready(function () {
+        let location = "";
+
+        $(".location").click(function () {
+          location = $(this).text();
+          $("#location").html(location + ' <span class="caret"></span>');
+        });
+      });
+
+      $("#hotelSearchForm").on("submit", function (event) {
+        event.preventDefault();
+
+        const hotelId = $("#hotelId").val();
+        const location = $("#location").text().trim();
+        // const date = $("#date").val();
+        // const time = $("#time").val();
+        if (location === "Select Location") {
+          alert("Please select a location");
+          return;
+        }
+
+        window.location.href = "/view-booked-room?hotelId=" + hotelId;
+      });
+
+      // function displayTickets(tickets) {
+      //   const ticketDetailsContainer = $("#ticketDetails");
+      //   ticketDetailsContainer.empty();
+
+      //   if (tickets.length === 0) {
+      //     ticketDetailsContainer.append(
+      //       "<p>No tickets found for the given details.</p>"
+      //     );
+      //     return;
+      //   }
+      //   tickets.forEach((ticket) => {
+      //     const ticketElement = `
+      //       <div class="panel panel-default">
+      //         <div class="panel-heading">
+      //           <h3 class="panel-title">PNR: ${ticket.pnr}</h3>
+      //         </div>
+      //         <div class="panel-body">
+      //           <p><strong>Passenger Name:</strong> ${ticket.passenger_name}</p>
+      //           <p><strong>Train:</strong> ${ticket.train_name}</p>
+      //           <p><strong>From:</strong> ${ticket.from}</p>
+      //           <p><strong>To:</strong> ${ticket.to}</p>
+      //           <p><strong>Date:</strong> ${ticket.date}</p>
+      //           <p><strong>Time:</strong> ${ticket.time}</p>
+      //           <p><strong>Seat:</strong> ${ticket.seat_number}</p>
+      //         </div>
+      //       </div>
+      //     `;
+      //     ticketDetailsContainer.append(ticketElement);
+      //   });
+      // }
+
+      // $("#fromStationList").on("click", "a", function () {
+      //   $("#fromDropdown").text($(this).text());
+      // });
+
+      // $("#toStationList").on("click", "a", function () {
+      //   $("#toDropdown").text($(this).text());
+      // });
+    </script>
+  </body>
+</html>

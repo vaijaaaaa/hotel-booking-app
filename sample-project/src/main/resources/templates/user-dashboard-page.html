@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Dashboard Page</title>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script>
+      function logout() {
+        localStorage.removeItem("aadhar");
+        window.location.href = "/";
+      }
+    </script>
+  
+      <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            background-color: #efebbf;
+        }
+       
+        .btn {
+            font-size: 25px;
+            margin-right: 15px;
+        }
+        .action-buttons {
+            margin-top: 30px;
+            margin-left: 15px;
+        }
+        .logout-btn {
+            margin-top: 20px;
+        }
+        h1 {
+            color: black;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-left: 15px;
+        }
+        .full-width {
+            width: 100%;
+            padding-right: 15px;
+        }
+        .left-align {
+            margin-right: 20px;
+        }
+    </style>
+    </style>
+  </head>
+  <body>
+    <div class="gradient-advanced">
+    
+
+    <div class="container">
+      <div class="pull-right">
+        <br />
+        <button type="button" class="btn btn-primary" onclick="logout()">
+          Logout
+        </button>
+      </div>
+
+      <br />
+      <h1 class="mt-4">
+        Good Morning, <span id="user-name"></span
+        ><span style="color: black"> (User Dashboard)</span>
+      </h1>
+      <div class="mt-4">
+        <br />
+        <br />
+        <!-- <a href="book-ticket">
+          <button type="button" class="btn btn-primary">Book Tickets</button>
+        </a> -->
+
+        <a th:href="@{search-hotel}">
+          <button type="button" class="btn btn-primary">Search Hotel</button>
+        </a>
+        <a th:href="@{cancel-room}">
+          <button type="button" class="btn btn-primary">Cancel Room</button>
+        </a>
+        <span class="view-booked-room-placeholder"></span>
+      </div>
+    </div>
+
+    <div class="container mt-4">
+      <!-- <h2>Your Booked Tickets</h2> -->
+      <div id="booked-room-container"></div>
+    </div>
+    </div>
+
+    <script>
+      function loadViewBookedRoomCache() {
+        const hotelNumber = localStorage.getItem("hotel_number");
+        const placeholder = document.querySelector(
+          ".view-booked-room-placeholder"
+        );
+        if (hotelNumber) {
+          placeholder.innerHTML = `
+            <a href="book-room?hotel_number=${hotelNumber}">
+              <button type="button" class="btn btn-primary">
+                 Booked Room
+              </button>
+            </a>
+          `;
+        }
+      }
+
+      function createBookedRoomElement(
+        hotelId,
+            pnr,
+            adminUser,
+            hotelName,
+            location,
+            date,
+            time,
+            usernames
+      ) {
+        const roomDetails = document.createElement("div");
+        roomDetails.className = "col-md-12";
+        roomDetails.style.border = "1px solid #ddd";
+        roomDetails.style.borderRadius = "5px";
+        roomDetails.style.padding = "15px";
+        roomDetails.style.marginBottom = "20px";
+
+        let visitorDropdownItems = usernames
+          .map(
+            (visitor) => `
+            <li>
+              <a class="dropdown-item" href="#">
+                ${visitor}
+              </a>
+            </li>
+          `
+          )
+          .join("");
+        roomDetails.innerHTML = `
+          <h3>Booked Ticket <small class="text-muted">Room Id: ${hotelId}</small></h3>
+          <div class="row">
+            <div class="col-xs-6">
+              <small>Visitors Name:</small>
+              <p class="lead"><strong>${adminUser}</strong></p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-6">
+              <small>Hotel:</small>
+              <p class="lead"><strong>${hotelName}</strong></p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-6">
+              <small>Location:</small>
+              <p><strong>${location}</strong></p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-3">
+              <small>Date:</small>
+              <p>${date}</p>
+            </div>
+            <div class="col-xs-3">
+              <small>Time:</small>
+              <p><strong>${time}</strong></p>
+            </div>
+            <div class="col-xs-3">
+              <small>Room Number:</small>
+              <p class="text-primary" style="font-size: 18px"><strong>${pnr}</strong></p>
+            </div>
+            <div class="col-xs-3">
+              <small>Room Id:</small>
+              <p class="text-success" style="font-size: 18px"><strong>${hotelId}</strong></p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-6">
+              <a href="view-booked-detail?pnr=${pnr}">
+                <button type="button" class="btn btn-primary">
+                  View Booked Room
+                </button>
+              </a>
+              <a href="book-room?hotel_number=${hotelId}">
+                <button type="button" class="btn btn-default">
+                  Book More
+                </button>
+              </a>
+            </div>
+            <div class="col-xs-6 text-right">
+              <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="visitorDropdown_${pnr}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Room Booked by: ${adminUser}
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="visitorDropdown_${pnr}">
+                  ${visitorDropdownItems}
+                </ul>
+              </div>
+            </div>
+          </div>
+        `;
+
+        return roomDetails;
+      }
+
+      function displayBookedRoom(
+        hotelId,
+            pnr,
+            adminUser,
+            hotelName,
+            location,
+            date,
+            time,
+            usernames
+      ) {
+        const container = document.getElementById("booked-room-container");
+        const roomElement = createBookedRoomElement(
+          hotelId,
+            pnr,
+            adminUser,
+            hotelName,
+            location,
+            date,
+            time,
+            usernames
+        );
+        container.appendChild(roomElement);
+      }
+
+      function generatePNR() {
+        return Math.floor(1000000000 + Math.random() * 9000000000).toString();
+      }
+
+      const EMAIL = "r.rahul.developer@gmail.com";
+
+      async function fetchUserData(aadhar) {
+        const endpoint = `/api/get-user-by-aadhar?aadhar=${aadhar}`;
+        const response = await fetch(endpoint).then((response) =>
+          response.json()
+        );
+        return response;
+      }
+
+      async function fetchRoomData(email) {
+        const endpoint = `/api/get-all-user-ticket?email=${email}`;
+        const response = await fetch(endpoint).then((response) =>
+          response.json()
+        );
+        return response;
+      }
+
+      async function fetchHotelData(hotelId) {
+        const endpoint = `/api/all-hotels`;
+        const response = await fetch(endpoint).then((response) =>
+          response.json()
+        );
+        for (const hotel of response) {
+          if (hotel.hotelNumber == hotelId) return hotel;
+        }
+        return -1;
+      }
+
+      async function getHotelData(hotelId) {
+        const endpoint = `/api/search-hotel-by-id?hotelId=${hotelId}`;
+        const response = await fetch(endpoint).then((response) =>
+          response.json()
+        );
+        return response;
+      }
+
+      async function fetchUserRoomData(pnr) {
+        const endpoint = `api/get-user-ticket?pnr=${pnr}`;
+        const response = await fetch(endpoint).then((response) =>
+          response.json()
+        );
+        return response;
+      }
+
+      async function updateBookedRoomsDisplay() {
+        const usernameComponent = document.getElementById("user-name");
+        // const searchParams = new URLSearchParams(window.location.search);
+        // const aadhar = searchParams.get("aadhar");
+        const aadhar = localStorage.getItem("aadhar");
+
+        const user = await fetchUserData(aadhar);
+        usernameComponent.innerText = user.username;
+
+        const rooms = await fetchRoomData(user.email);
+
+        console.log(rooms);
+
+        rooms.forEach(async (room) => {
+          const pnr = room.pnr;
+          const hotelId = room.hotelId;
+          const roomData = await fetchHotelData(hotelId);
+          const users = await fetchUserRoomData(pnr);
+
+          const hotel = await getHotelData(hotelId);
+
+          console.log(hotel);
+
+          const adminUser = users[0]?.name;
+          const hotelName = roomData.hotelName;
+          console.log(hotelName);
+          const location= hotel.location;
+          const date = roomData.date;
+          const time = roomData.time;
+          const seats = [];
+          users.forEach((user) => seats.push(user.seatNumber));
+          const usernames = [];
+          users.forEach((user) => usernames.push(user.name));
+          displayBookedRoom(
+            hotelId,
+            pnr,
+            adminUser,
+            hotelName,
+            location,
+            date,
+            time,
+            usernames
+          );
+        });
+
+        const container = document.getElementById("booked-room-container");
+        container.innerHTML = ""; // Clear previous content
+        // displayBookedTicket(
+        //   generatePNR(),
+        //   "Rahul",
+        //   "Rajdhani Express",
+        //   "Delhi",
+        //   "Mumbai",
+        //   "2024-07-21",
+        //   "16:45",
+        //   "B12",
+        //   ["Rahul", "Sahil", "Sam"]
+        // );
+        // fetchTickets();
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        updateBookedRoomsDisplay();
+        loadViewBookedRoomCache();
+      });
+    </script>
+  </body>
+</html>
